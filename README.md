@@ -7,9 +7,9 @@ The application demonstrates **authentication**, **profile management**, and **C
 
 ## 🌐 Live Demo
 
-- **Backend (Django API):** `https://<your-backend-url>.onrender.com/`  
-- **Frontend (JS App):** `https://<your-frontend-url>.onrender.com/`  
-- **API Docs (Swagger / DRF Browsable API):** `https://<your-backend-url>.onrender.com/swagger/`
+- **Backend (Django API):** `https://07465ff631b9.ngrok-free.app`  
+- **Frontend (JS App):** `https://5949a4030571.ngrok-free.app/`  
+- **API Docs (Swagger / DRF Browsable API):** `https://07465ff631b9.ngrok-free.app/api/docs/`
 
 ---
 

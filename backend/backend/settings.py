@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-7!+dxdg=xqz93(8kas$9+s!yh+ccicq+1o(uh3m&wntuqvr9vw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'users.User'
 # Application definition
@@ -93,6 +93,7 @@ CORS_ALLOWED_ORIGINS = [
 "http://127.0.0.1:8080",
 # add your frontend origin if served separately
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

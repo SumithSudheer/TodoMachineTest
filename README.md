@@ -48,7 +48,7 @@ Profile fields:
 
 ## 💻 Setup Instructions
 
-### 1. Clone Repository
+
 ```bash
 git clone https://github.com/<your-username>/<your-repo>.git
 cd <your-repo>

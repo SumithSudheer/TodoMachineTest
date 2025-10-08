@@ -50,7 +50,6 @@ Profile fields:
 
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git https://github.com/SumithSudheer/TodoMachineTest.git
 docker compose up --build
 ```

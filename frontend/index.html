@@ -1,0 +1,653 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Todo Management — Demo</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; padding-top:60px; max-width:800px; margin:auto; }
+  .tabs {
+  display: flex;
+  border-bottom: 2px solid #007bff;
+  margin-bottom: 10px;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+  background: #e0e0e0;
+  border-radius: 8px 8px 0 0;
+  margin-right: 2px;
+  font-weight: bold;
+}
+.tab.active {
+  background: #007bff;
+  color: #fff;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+  
+  .box { border:1px solid #ddd; padding:20px; margin-bottom:12px; border-radius:8px; background:#f9f9f9; }
+  input, textarea { width:100%; padding:8px; margin:6px 0; box-sizing:border-box; border-radius:4px; border:1px solid #ccc; }
+  button.main-btn { background:#007bff; color:#fff; border:none; border-radius:4px; padding:8px 16px; cursor:pointer; margin-top:6px; }
+  button.main-btn:hover { background:#0056b3; }
+  h2 { text-align:center; margin-bottom:20px; }
+  .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: white;
+  z-index: 1000;
+}
+
+.navbar-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.navbar-buttons button {
+  margin-left: 10px;
+  background: #fff;
+  color: #007bff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.navbar-buttons button:hover {
+  background: #e0e0e0;
+}
+
+.task-tabs {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.task-tabs button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  cursor: pointer;
+  background: #f1f1f1;
+  margin-right: 4px;
+  border-radius: 4px 4px 0 0;
+}
+
+.task-tabs button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.task-tab-content {
+  display: none;
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 0 4px 4px 4px;
+  background: #f9f9f9;
+}
+
+.task-tab-content.active {
+  display: block;
+}
+<style>
+/* Shared button styles */
+button {
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+/* Edit button */
+.btn-edit {
+  background-color: #007bff;
+  color: white;
+  margin-right: 8px;
+}
+.btn-edit:hover {
+  background-color: #0056b3;
+}
+
+/* Delete button */
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-delete:hover {
+  background-color: #a71d2a;
+}
+
+/* Pagination buttons */
+.page-btn {
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  margin: 0 4px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.page-btn:hover {
+  background-color: #e1e1e1;
+}
+
+/* Task card */
+.task-card {
+  border: 1px solid #eee;
+  padding: 10px 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  background-color: #fafafa;
+  font-family: 'Inter', sans-serif;
+}
+.task-card strong {
+  font-size: 16px;
+  color: #333;
+}
+.task-card small {
+  color: #777;
+}
+
+<style>
+:root {
+  --primary: #2563eb;      /* Blue for edit */
+  --danger: #dc2626;       /* Red for delete */
+  --bg: #f9fafb;           /* Light gray background */
+  --border: #e5e7eb;       /* Soft border */
+  --text: #111827;         /* Default text */
+  --muted: #6b7280;        /* Muted text */
+  --radius: 8px;
+  --transition: all 0.2s ease;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background-color: var(--bg);
+}
+
+/* Each task card */
+.task-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin: 10px 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: var(--transition);
+}
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+.task-card strong {
+  display: block;
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.task-card p {
+  margin: 2px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.task-card small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Buttons */
+button {
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: var(--transition);
+}
+
+/* Primary (Edit) */
+.btn-edit {
+  background: var(--primary);
+  color: rgb(61, 92, 233);
+}
+.btn-edit:hover {
+  background: #1d4ed8;
+  color: rgb(255, 255, 255);
+}
+
+/* Danger (Delete) */
+.btn-delete {
+  background: var(--danger);
+  color: rgb(0, 0, 0);
+}
+.btn-delete:hover {
+  background: #b91c1c;
+  color: rgb(255, 255, 255);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+.page-btn {
+  background: rgb(31, 10, 218);
+  color: rgb(255, 255, 255);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+.page-btn:hover {
+  background:  rgb(31, 10, 218);
+  color: rgb(255, 255, 255);
+  border-color: var(--primary);
+}
+</style>
+</head>
+<body>
+
+
+    <div id="auth" class="box">
+        <div class="tabs">
+          <div class="tab active" data-tab="login-tab">Login</div>
+          <div class="tab" data-tab="register-tab">Register</div>
+        </div>
+      
+        <div id="login-tab" class="tab-content active">
+          <input id="login_username" placeholder="Username"/>
+          <input id="login_password" type="password" placeholder="Password"/>
+          <button class="main-btn" id="btn-login">Login</button>
+        </div>
+      
+        <div id="register-tab" class="tab-content">
+          <input id="reg_email" placeholder="Email"/>
+          <input id="reg_password" type="password" placeholder="Password"/>
+          <input id="reg_password2" type="password" placeholder="Confirm Password"/>
+          <button class="main-btn" id="btn-register">Register</button>
+        </div>
+      </div>
+
+<!-- Navbar after login -->
+<div class="navbar" style="display:none;">
+    <h2 class="navbar-title">Todo Management Demo</h2>
+    <div class="navbar-buttons">
+      <button id="nav-profile">Profile</button>
+      <button id="nav-change-password">Change Password</button>
+      <button id="nav-add-task">Task</button>
+      <button id="btn-logout">Logout</button>
+    </div>
+  </div>
+
+<!-- Profile section -->
+<div id="profile" class="box" style="display:none;">
+  <div id="profile_view"></div>
+  <h4>Edit Profile</h4>
+  <input id="p_full_name" placeholder="Full name"/>
+  <input id="p_dob" placeholder="YYYY-MM-DD" type="date"/>
+  <textarea id="p_address" placeholder="Address"></textarea>
+  <input id="p_gender" placeholder="M/F/O" />
+  <input id="p_mobile" placeholder="Mobile number"/>
+  <button class="main-btn" id="btn-update-profile">Update Profile</button>
+</div>
+
+<!-- Change Password section -->
+<div id="change-password-box" class="box" style="display:none;">
+    <h4>Change Password</h4>
+    <input id="new_password" type="password" placeholder="New password"/>
+    <input id="new_password2" type="password" placeholder="Re-enter password"/>
+    <button class="main-btn" id="btn-change-password">Change Password</button>
+  </div>
+
+<!-- Add Task section -->
+<div id="tasks" class="box" style="display:none;">
+    <!-- Tabs -->
+    <div class="task-tabs">
+      <button class="task-tab active" data-tab="view-tasks-tab">Your Tasks</button>
+
+      <button class="task-tab " data-tab="create-task-tab">Create Task</button>
+    </div>
+  
+    <!-- Create Task Tab -->
+    <div id="create-task-tab" class="task-tab-content ">
+      <h4>Create Task</h4>
+      <input id="t_title" placeholder="Title"/>
+      <textarea id="t_description" placeholder="Description"></textarea>
+      <input id="t_attachment" type="file"/>
+      <button class="main-btn" id="btn-create-task">Create</button>
+    </div>
+  
+    <!-- View Tasks Tab -->
+    <div id="view-tasks-tab" class="task-tab-content active" style="margin-top:20px;">
+      <h4>Your Tasks</h4>
+      <input type="text" id="task-search" placeholder="Search tasks..." style="width:100%;padding:6px;margin-bottom:10px;border:1px solid #ccc;border-radius:4px;"/>
+      <div id="task_list"></div>
+    </div>
+  </div>
+
+<script>
+const API_BASE = "http://localhost:8000";
+
+function saveTokens(tokens){
+  localStorage.setItem('access', tokens.access);
+  localStorage.setItem('refresh', tokens.refresh || '');
+}
+
+function getAuthHeaders(){
+  const token = localStorage.getItem('access');
+  return token ? { 'Authorization': 'Bearer ' + token } : {};
+}
+
+$(document).ready(function(){
+
+  // Tabs for login/register
+  $('.tab').click(function(){
+    $('.tab').removeClass('active');
+    $(this).addClass('active');
+    $('.tab-content').removeClass('active');
+    $('#' + $(this).data('tab')).addClass('active');
+  });
+
+  // Register
+  $('#btn-register').click(function(){
+    $.ajax({
+      url: API_BASE + '/api/users/register/',
+      method: 'POST',
+      data: {
+        email: $('#reg_email').val(),
+        password: $('#reg_password').val(),
+        password2: $('#reg_password2').val()
+      }
+    }).done(function(){ alert('Registered successfully. Please login.'); })
+      .fail(function(err){ alert(JSON.stringify(err.responseJSON)); });
+  });
+
+  // Login
+  $('#btn-login').click(function(){
+    $.ajax({
+      url: API_BASE + '/api/users/auth/token/',
+      method: 'POST',
+      data: {
+        email: $('#login_username').val(),
+        password: $('#login_password').val()
+      }
+    }).done(function(data){
+      saveTokens(data);
+      $('#auth').hide();
+      $('.navbar').show();
+      loadProfile();
+      loadTasks();
+    }).fail(function(){ alert('Login failed'); });
+  });
+
+  // Logout
+  $('#btn-logout').click(function(){
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    $('.navbar').hide();
+    $('#auth').show();
+    $('#profile').hide();
+    $('#tasks').hide();
+    $('#change-password-box').hide();
+  });
+
+  // Navbar buttons
+  $('#nav-profile').click(function(){
+    $('#profile').show();
+    $('#tasks').hide();
+    $('#change-password-box').hide();
+  });
+  $('#nav-change-password').click(function(){
+    $('#profile').hide();
+    $('#tasks').hide();
+    $('#change-password-box').show();
+  });
+  $('#nav-add-task').click(function(){
+    loadTasks();
+    $('#profile').hide();
+    $('#tasks').show();
+    $('#change-password-box').hide();
+  });
+
+  // Update Profile
+//   $('#btn-update-profile').click(function(){
+//     $.ajax({
+//       url: API_BASE + '/api/users/profile/',
+//       method: 'PUT',
+//       headers: getAuthHeaders(),
+//       data: {
+//         full_name: $('#p_full_name').val(),
+//         date_of_birth: $('#p_dob').val(),
+//         address: $('#p_address').val(),
+//         gender: $('#p_gender').val(),
+//         mobile_number: $('#p_mobile').val()
+//       }
+//     }).done(function(){ alert('Profile updated'); loadProfile(); })
+//       .fail(function(err){ alert(JSON.stringify(err.responseJSON)); });
+//   });
+$('#btn-update-profile').click(function(){
+    $.ajax({
+        url: API_BASE + '/api/users/profile/',
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        data: {
+            full_name: $('#p_full_name').val(),
+            date_of_birth: $('#p_dob').val(),
+            address: $('#p_address').val(),
+            gender: $('#p_gender').val(),
+            mobile_number: $('#p_mobile').val()
+        }
+    }).done(function(data){
+        alert('Profile updated successfully');
+        loadProfile(); // reload to refresh any changes
+    }).fail(function(err){
+        alert(JSON.stringify(err.responseJSON));
+    });
+});
+
+  // Change Password
+  $('#btn-change-password').click(function(){
+    const newPassword = $('#new_password').val();
+    const newPassword2 = $('#new_password2').val();
+
+    // Simple validation
+    if(!newPassword || !newPassword2){
+        alert("Please fill both fields.");
+        return;
+    }
+    if(newPassword !== newPassword2){
+        alert("Passwords do not match!");
+        return;
+    }
+
+    $.ajax({
+        url: API_BASE + '/api/users/reset-password/', // your backend endpoint
+        method: 'POST',
+        headers: getAuthHeaders(),
+        data: {
+            new_password: newPassword
+        }
+    }).done(function(){
+        alert('Password changed successfully!');
+        // Clear fields
+        $('#new_password').val('');
+        $('#new_password2').val('');
+    }).fail(function(err){
+        alert(JSON.stringify(err.responseJSON));
+    });
+});
+  // Add Task
+  $('#btn-create-task').click(function(){
+    const formData = new FormData();
+    formData.append('title', $('#t_title').val());
+    formData.append('description', $('#t_description').val());
+    const file = $('#t_attachment')[0].files[0];
+    if(file) formData.append('attachment', file);
+    $.ajax({
+      url: API_BASE + '/api/tasks/tasks/',
+      method: 'POST',
+      headers: getAuthHeaders(),
+      data: formData,
+      processData: false,
+      contentType: false
+    }).done(function(){ alert('Task created'); loadTasks(); })
+      .fail(function(err){ alert(JSON.stringify(err.responseJSON)); });
+  });
+  // Load Profile
+  function loadProfile() {
+    $.ajax({
+        url: API_BASE + '/api/users/profile/',  // your DRF endpoint
+        method: 'GET',
+        headers: getAuthHeaders()
+    }).done(function(data){
+        // Show profile section
+        $('#profile').show();
+
+        // Fill fields if data exists
+        $('#p_full_name').val(data.full_name || '');
+        $('#p_dob').val(data.date_of_birth || '');
+        $('#p_address').val(data.address || '');
+        $('#p_gender').val(data.gender || '');
+        $('#p_mobile').val(data.mobile_number || '');
+
+        // Optional: Show JSON for debug
+        // $('#profile_view').html('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+    }).fail(function(err){
+        console.log('Failed to load profile', err);
+    });
+}
+
+
+
+  // Load Tasks
+  let currentSearch = '';
+  
+function loadTasks(url) {
+    url = url || API_BASE + '/api/tasks/tasks/'; // Default first page
+    if (currentSearch) {
+        // Append search query to URL
+        const separator = url.includes('?') ? '&' : '?';
+        url += `${separator}search=${encodeURIComponent(currentSearch)}`;
+    }
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        headers: getAuthHeaders()
+    }).done(function(data) {
+        let html = '';
+        if(data.results.length === 0){
+            html = '<p>No tasks found.</p>';
+        } else {
+            data.results.forEach(function(t){
+                const createdDate = new Date(t.created_at);
+                const formattedDate = createdDate.toLocaleString('en-IN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+
+                html += `
+                  <div style="border:1px solid #eee;padding:8px;margin:6px 0;">
+                    <strong>${t.title}</strong>
+                    <p>${t.description}</p>
+                    ${t.attachment ? `<a href="${t.attachment}" target="_blank" style="display:inline-block;margin:6px 0;color:#007bff;text-decoration:none;">📎 View File</a>` : ''}
+                    <p><small>Created: ${formattedDate}</small></p>
+                    <button data-id="${t.id}" class="btn-edit">Edit</button>
+      <button data-id="${t.id}" class="btn-delete">Delete</button>
+                  </div>`;
+            });
+        }
+
+        // Pagination buttons
+        html += '<div style="margin-top:10px;">';
+            if(data.previous) html += `<button class="page-btn" data-url="${data.previous}">Previous</button>`;
+            if(data.next) html += `<button class="page-btn" data-url="${data.next}">Next</button>`;
+        html += '</div>';
+
+        $('#task_list').html(html);
+    });
+}
+
+// Search input
+$('#task-search').on('input', function() {
+    currentSearch = $(this).val();
+    loadTasks(); // reload with search
+});
+
+// Pagination buttons
+$(document).on('click', '.page-btn', function(){
+    const url = $(this).data('url');
+    loadTasks(url);
+});
+
+// Delete task
+$(document).on('click', '.btn-delete', function(){
+    const id = $(this).data('id');
+    $.ajax({
+      url: API_BASE + '/api/tasks/tasks/' + id + '/',
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    }).done(function(){ loadTasks(); });
+});
+
+// Edit task
+$(document).on('click', '.btn-edit', function(){
+    const id = $(this).data('id');
+    const newTitle = prompt('New Title?');
+    const newDesc = prompt('New Description?');
+    $.ajax({
+      url: API_BASE + '/api/tasks/tasks/' + id + '/',
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      data: { title: newTitle, description: newDesc }
+    }).done(function(){ loadTasks(); });
+});
+
+  // Auto-login
+  if(localStorage.getItem('access')){
+    $('#auth').hide();
+    $('.navbar').show();
+    loadProfile();
+    loadTasks();
+  }
+
+});
+$('.task-tab').click(function(){
+  $('.task-tab').removeClass('active');
+  $(this).addClass('active');
+
+  $('.task-tab-content').removeClass('active');
+  $('#' + $(this).data('tab')).addClass('active');
+
+  // If user switches to "Your Tasks", load tasks
+  if($(this).data('tab') === 'view-tasks-tab'){
+    loadTasks();
+  }
+});
+</script>
+</body>
+</html>
